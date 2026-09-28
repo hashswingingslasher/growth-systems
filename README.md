@@ -4,7 +4,7 @@
 
 These are case studies, one per system: the problem, the decision that mattered, the tradeoff I accepted, and what shipped. The code lives in private client repositories; what is here is the thinking behind it. The work itself, with screenshots, is at [berwin.work](https://berwin.work).
 
-Built with Claude, Codex, Gemini, n8n, Supabase, Next.js, HubSpot, Apollo, Firecrawl, RapidAPI, Jina, Railway, Vercel, Playwright and Python.
+Built with Claude, Codex, Gemini, Jev, n8n, Supabase, Next.js, HubSpot, Apollo, Firecrawl, RapidAPI, Jina, Railway, Vercel, Playwright and Python.
 
 ## Case studies
 
