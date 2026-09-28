@@ -10,7 +10,7 @@ The deeper problem was not volume, it was **connection**. A single post is rarel
 
 ## What we built
 
-A platform that monitors a watchlist of companies across five channels daily (LinkedIn, Reddit, X, job postings, and website changes), uses an LLM to extract entities and relationships from each signal, classifies them strategically (competitor, prospect, partner, investor, ecosystem), and stores them as a knowledge graph. The team gets an alert feed with sentiment and threat scoring, an interactive relationship graph, product-level briefings, and the ability to ask the graph questions in plain English.
+A platform that monitors a watchlist of companies across six channels daily (LinkedIn, X, Reddit, job postings, Telegram and website changes), uses an LLM to extract entities and relationships from each signal, classifies them strategically (competitor, prospect, partner, investor, ecosystem), and stores them as a knowledge graph. The team gets an alert feed with sentiment and threat scoring, an interactive relationship graph, product-level briefings, and the ability to ask the graph questions in plain English.
 
 Not a feed of today's posts. A live map of how the players connect and what just moved. It also surfaces warm paths: given a target, who on the team has a route in, layered from strongest (a direct connector) to weakest (a cold angle).
 
@@ -22,7 +22,7 @@ I ran an actual A/B test instead of trusting that instinct. 25 real alerts, iden
 
 The assumption was wrong. The cheap model was not under-scoring, it was **over-scoring**, correctly upgrading genuine competitors that the expensive model had been too conservative about. It also correctly downgraded noise that the expensive model had over-rated. Sentiment agreement was 84%. On the dimensions that mattered, the cheap model was arguably the better judge, and it was roughly 87% cheaper to run.
 
-We shipped the cheap model across all five scoring pipelines. The lesson I keep: a four-cent experiment beat a confident opinion, and the confident opinion was mine. The switch also cut running cost by roughly 79%, from about $178 a month to $110-130, while the scoring got better, not worse. Cheaper and more correct is rare. You only find it by testing.
+We shipped the cheap model across every scoring pipeline. The lesson I keep: a four-cent experiment beat a confident opinion, and the confident opinion was mine. You only find that out by testing.
 
 ## Key decision 2: reliability over cost, when the data is perishable
 
@@ -48,8 +48,8 @@ Language models default to the tone of the content they read. A competitor's tri
 
 ```
 Watchlist of companies
-   -> 5 daily pipelines: LinkedIn, Reddit, X,
-      job postings, website changes
+   -> 6 daily pipelines: LinkedIn, X, Reddit,
+      job postings, Telegram, website changes
    -> LLM extraction: entities, relationships, sentiment,
       strategic classification, threat + priority scoring
    -> Supabase (Postgres) knowledge graph

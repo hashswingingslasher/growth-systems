@@ -12,7 +12,7 @@ That is hours of judgment work per company, it does not scale, and it is exhaust
 
 ## What good judgment actually looks like here
 
-A sharp BD person, given a company, instinctively asks three things. Is it real? Who matters there? Do we already have a way in? The whole design is an attempt to make that instinct repeatable, so it happens for all 116 companies and not just the first ten before fatigue sets in.
+A sharp BD person, given a company, instinctively asks three things. Is it real? Who matters there? Do we already have a way in? The whole design is an attempt to make that instinct repeatable, so it happens for every company on the list and not just the first ten before fatigue sets in.
 
 ## Key decision 1: turn "is this real?" into a score
 

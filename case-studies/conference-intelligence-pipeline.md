@@ -18,7 +18,7 @@ Every conference website is different. Any scraper hardcoded to one site is dead
 
 Instead of writing per-site scrapers, extraction is model-driven. It handles arbitrary HTML and pagination, and saves incrementally as it goes, so a long run that breaks does not start over. One extractor works on any conference site.
 
-This is slower and less surgical than a purpose-built scraper for a specific site. I took that trade deliberately, because the entire point was to stop being in the loop for every new event. Using a small, cheap model keeps the per-page cost negligible, which is what makes running it across a 70-page lineup viable at all.
+This is slower and less surgical than a purpose-built scraper for a specific site. I took that trade deliberately, because the entire point was to stop being in the loop for every new event. Using a small, cheap model keeps the per-page cost negligible, which is what makes running it across a long, multi-page lineup viable at all.
 
 ## Key decision 2: design around a scarce resource
 
@@ -58,4 +58,4 @@ I gave up two things on purpose. A hardcoded scraper for one recurring event wou
 
 ## Outcome
 
-Research per event dropped from 8-15 hours to a target of under 2, most of which is now review time rather than data gathering. The person preparing for the conference gets to spend their time preparing for the conference.
+Extraction that used to need a custom scraper and most of a day per event now runs in minutes on a site nobody has seen before, so the time goes into review and meeting prep instead. The person preparing for the conference gets to spend their time preparing for the conference.
