@@ -1,4 +1,4 @@
-# How I think about GTM engineering
+# How I think about building growth systems
 
 Most GTM problems are not strategy problems. They are execution problems dressed up as strategy problems. The plan is usually fine. What breaks is that the plan requires 40 hours of manual work a week that nobody has. So I look for the manual motion that is eating the team alive, and I build the system that removes it.
 
@@ -6,7 +6,7 @@ A few principles I keep coming back to.
 
 **Start from the motion, not the tool.** I do not begin with "we should use an AI agent here." I begin with "what is a person doing by hand every week that a machine could do." The tool is the last decision, not the first.
 
-**Ship the version that runs today.** A retainer plus a productized service beats a beautiful SaaS that ships next quarter. Revenue and usage teach you more than a roadmap does. Every system here started as something small that worked, then grew.
+**Ship the version that runs today.** A small system that works this week beats a perfect one that ships next quarter. Revenue and usage teach you more than a roadmap does. Every system here started as something small that worked, then grew.
 
 **Data quality is the whole game.** A GTM system that enriches the wrong contacts faster is worse than no system. I spend more time on verification and dedup than on the flashy part, because a sales team stops trusting a tool the first time it burns them.
 
