@@ -1,48 +1,48 @@
 # Competitive Intelligence Dashboard
 
-**Context:** A privacy-technology company in a fast-moving category where competitors, prospects, partners, and investors all broadcast their moves publicly, mostly on LinkedIn.
+**Context:** A privacy-technology company in a fast-moving category where competitors, prospects, partners and investors announce their moves in public, mostly on LinkedIn.
 
 ## The problem
 
-Competitors announce constantly. Launches, partnerships, hires, funding, conference appearances. The signal is genuinely there in public, but it is buried in volume and it is unstructured. Reading it manually is a job nobody has time for, so it did not happen consistently, and by the time someone noticed a move it was often after the sales conversation where it mattered.
+Competitors post constantly: launches, partnerships, hires, funding rounds, conference appearances. The information is public, but it is buried in volume and has no structure. Reading it by hand is a job nobody had time for, so it happened unevenly, and a competitor's move was often spotted only after the sales conversation where it would have mattered.
 
-The deeper problem was not volume, it was **connection**. A single post is rarely interesting on its own. What matters is that the same person keeps showing up across three competitors, or that a prospect just partnered with a competitor. Those relationships are invisible if you are reading a feed post by post.
+Volume was only half of it. A single post rarely matters on its own. What matters is the same person turning up at three competitors, or a prospect partnering with a competitor, and you can't see that reading a feed one post at a time.
 
 ## What we built
 
-A platform that monitors a watchlist of companies across six channels daily (LinkedIn, X, Reddit, job postings, Telegram and website changes), uses an LLM to extract entities and relationships from each signal, classifies them strategically (competitor, prospect, partner, investor, ecosystem), and stores them as a knowledge graph. The team gets an alert feed with sentiment and threat scoring, an interactive relationship graph, product-level briefings, and the ability to ask the graph questions in plain English.
+A platform that monitors a watchlist of companies across six channels daily (LinkedIn, X, Reddit, job postings, Telegram and website changes). An LLM extracts the entities and relationships in each signal and classifies them as competitor, prospect, partner, investor or ecosystem, and everything is stored as a knowledge graph. The team gets an alert feed with sentiment and threat scores, an interactive relationship graph, product-level briefings, and can ask the graph questions in plain English.
 
-Not a feed of today's posts. A live map of how the players connect and what just moved. It also surfaces warm paths: given a target, who on the team has a route in, layered from strongest (a direct connector) to weakest (a cold angle).
+It also finds warm paths. Given a target, it shows who on the team has a route in, ordered from a direct connector down to a cold angle.
 
-## Key decision 1: pick the model with a test, not an opinion
+## Key decision 1: choose the model with a test
 
 The scoring pipeline needed a model. The obvious assumption was that the cheap model would under-score and miss real threats, so we should pay for the expensive one.
 
-I ran an actual A/B test instead of trusting that instinct. 25 real alerts, identical prompt, both models. It cost four cents to find out.
+I ran an A/B test instead of going with that instinct: 25 real alerts, the same prompt, both models. It cost four cents.
 
-The assumption was wrong. The cheap model was not under-scoring, it was **over-scoring**, correctly upgrading genuine competitors that the expensive model had been too conservative about. It also correctly downgraded noise that the expensive model had over-rated. Sentiment agreement was 84%. On the dimensions that mattered, the cheap model was arguably the better judge, and it was roughly 87% cheaper to run.
+The assumption was wrong. The cheap model was over-scoring, and correctly: it upgraded genuine competitors the expensive model had been too cautious about, and it downgraded noise the expensive model had rated too high. Sentiment agreement was 84%. On the dimensions that mattered the cheap model was arguably the better judge, and it was roughly 87% cheaper to run.
 
-We shipped the cheap model across every scoring pipeline. The lesson I keep: a four-cent experiment beat a confident opinion, and the confident opinion was mine. You only find that out by testing.
+We shipped the cheap model across every scoring pipeline. A four-cent experiment beat a confident opinion, and the confident opinion was mine.
 
-## Key decision 2: reliability over cost, when the data is perishable
+## Key decision 2: reliability over cost when the data goes stale
 
-The batch API is meaningfully cheaper than sequential calls. We tried it, and reverted it.
+The batch API is meaningfully cheaper than sequential calls. We tried it and reverted.
 
-The reason is that batch offers no completion guarantee. Jobs can take up to 24 hours, and when polling timed out we lost **entire days of intelligence**. For a product whose whole value is telling you what changed today, data that arrives a day late is not discounted, it is worthless.
+Batch jobs have no completion guarantee. They can take up to 24 hours, and when polling timed out we lost whole days of intelligence. For a product whose value is telling you what changed today, a day-late result is worthless.
 
-So we went back to sequential calls, with a hard cost guard per run and a delay between calls. More expensive per run, and correct. Cost optimisation that destroys the product is not optimisation.
+So we went back to sequential calls, with a hard cost cap per run and a delay between calls. It costs more per run and it works.
 
 ## Key decision 3: never write unverified data to the database
 
-We learned this one the hard way. Research produced by an AI agent was treated as fact and written straight to the database. The result was dozens of fabricated LinkedIn URLs sitting in production data.
+We learned this one the hard way. Research from an AI agent was treated as fact and written straight to the database, and dozens of fabricated LinkedIn URLs ended up in production data.
 
-The rule that came out of it, which I now apply everywhere: **agent research is a hypothesis, a live API response is truth.** Nothing gets written from the former. Entity extraction also picks up garbage in predictable ways, so it is defended in three layers rather than one: at extraction, at classification, and with a blocklist at the database itself.
+The rule I now apply everywhere: agent research is a hypothesis, and a live API response is the truth. Nothing gets written from the first. Entity extraction also picks up junk in predictable ways, so it is filtered at three points: at extraction, at classification, and by a blocklist in the database itself.
 
 A GTM tool that quietly holds wrong data is worse than no tool, because people act on it.
 
-## A prompt insight worth keeping
+## A prompt lesson worth keeping
 
-Language models default to the tone of the content they read. A competitor's triumphant launch post scores as "positive" unless you explicitly anchor the model to judge from *your* competitive perspective. A great day for them is a bad day for you. That anchoring had to be written into the prompt with examples. Sentiment is not a property of the text, it depends on who is asking.
+Language models take on the tone of what they read. A competitor's triumphant launch post scores as positive unless the prompt tells the model to judge from your side. A great day for them is a bad day for you, and that had to be written into the prompt with examples.
 
 ## Architecture
 
@@ -62,8 +62,8 @@ Next.js, Supabase, Claude API with prompt caching and per-run cost caps, n8n for
 
 ## The tradeoff I accepted
 
-The system hides most of what it collects, on purpose. A team that gets everything reads nothing. I would rather it occasionally drop something a completionist would keep, and stay a surface the team actually trusts and opens. A filtered feed people read beats a complete one they mute.
+The system hides most of what it collects, on purpose. A team that gets everything reads nothing. I'd rather it sometimes drop something a completionist would keep and stay a feed the team actually opens.
 
 ## Outcome
 
-Competitive awareness moved from a manual side task that happened inconsistently to a standing surface the team relies on, with the relationships between players made visible rather than left to memory.
+Tracking competitors went from an occasional manual task to a feed the team relies on, and the relationships between players are now visible instead of left to memory.

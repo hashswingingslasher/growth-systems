@@ -4,38 +4,36 @@
 
 ## The problem
 
-This was 8 to 15 hours of work per event, and it was the wrong kind of work. Write a custom scraper for that particular conference site. Pull the speakers. Look each one up. Enrich them. Cross-reference against the CRM so you are not re-adding people you already know. Rank them. Format it. Import it.
+This took 8 to 15 hours per event. Write a scraper for that particular conference site, pull the speakers, look each one up, enrich them, check them against the CRM so known contacts aren't added twice, rank them, format the list, import it.
 
-Every conference site is laid out differently, so the scraper was thrown away each time and the work never got faster with repetition. And because the research took so long, the list often landed late, which is the one thing that cannot happen. A lead list that arrives after the event has zero value.
+Every conference site is laid out differently, so the scraper was thrown away after each event and the work never got faster. Because the research took so long, the list often arrived late, and a lead list that arrives after the event is useless. The person doing the research was also the person who should have been preparing for the meetings.
 
-The hours were not even the worst of it. The person burning them is the same person who should be prepping for the meetings.
+## The constraint
 
-## The constraint that shaped everything
-
-Every conference website is different. Any scraper hardcoded to one site is dead on arrival at the next event. So the actual problem was never "scrape this page." It was "handle a page nobody has seen before, without a human rewriting the extractor each time."
+Any scraper written for one site fails on the next. So the real task was to handle a page nobody had seen before without someone rewriting the extractor each time.
 
 ## Key decision 1: let the model read the page
 
-Instead of writing per-site scrapers, extraction is model-driven. It handles arbitrary HTML and pagination, and saves incrementally as it goes, so a long run that breaks does not start over. One extractor works on any conference site.
+Extraction is model-driven instead of per-site. It handles arbitrary HTML and pagination and saves as it goes, so a long run that breaks doesn't start over. One extractor works on any conference site.
 
-This is slower and less surgical than a purpose-built scraper for a specific site. I took that trade deliberately, because the entire point was to stop being in the loop for every new event. Using a small, cheap model keeps the per-page cost negligible, which is what makes running it across a long, multi-page lineup viable at all.
+It is slower and less precise than a scraper written for one site. I accepted that because the point was to stop being needed for every new event. A small, cheap model keeps the cost per page low enough to run it across a long, multi-page lineup.
 
-## Key decision 2: design around a scarce resource
+## Key decision 2: spend enrichment credits where they count
 
-Enrichment credits are limited and they cost real money. So the pipeline never enriches everything by default. Instead:
+Enrichment credits are limited and cost money, so the pipeline never enriches everyone by default:
 
-- Speakers are **ranked by seniority first**, so scarce credits get spent on decision-makers rather than alphabetically
-- There is a **hard credit cap** on any run
-- Enrichment only happens on an explicit human selection, never automatically
-- Runs **checkpoint and resume**, so an interruption does not re-spend credits on work already done
+- Speakers are ranked by seniority first, so credits go to decision-makers before anyone else
+- Every run has a hard credit cap
+- Enrichment happens only on rows a person selects
+- Runs checkpoint and resume, so an interruption doesn't spend credits twice
 
-Ranking before spending is the whole idea. If you can only enrich a fraction of a lineup, that fraction should be the C-suite.
+If you can only enrich part of a lineup, that part should be the C-suite.
 
-## Key decision 3: dry-run by default, non-negotiable
+## Key decision 3: dry run by default
 
-Every operation that spends money or writes to the CRM defaults to a dry run. Nothing enriches, and nothing touches the CRM, without an explicit action from the user.
+Anything that spends money or writes to the CRM runs as a dry run unless the user explicitly says otherwise.
 
-This exists because the people using it are not engineers. The tool has to be safe in the hands of someone who is not thinking about API credits or CRM hygiene while clicking. A tool that can quietly cost money or pollute the CRM on a misclick will stop being used, and it deserves to. Safety is not a feature here, it is the precondition for anyone trusting it.
+The people using it are not engineers. It has to be safe for someone who isn't thinking about API credits or CRM hygiene while they click. A tool that can quietly spend money or pollute the CRM on a misclick stops being used.
 
 ## Architecture
 
@@ -50,12 +48,12 @@ Conference URL
    -> CSV export or push net-new contacts to the CRM
 ```
 
-The CLI pipeline came first and works. The browser review layer was added on top so the whole BD team can review and act, rather than the list living in a terminal and JSON files with one person as the bottleneck.
+The command-line pipeline came first. The browser review layer came later so the whole BD team can review and act on the list, instead of it sitting in a terminal with one person as the bottleneck.
 
 ## The tradeoff I accepted
 
-I gave up two things on purpose. A hardcoded scraper for one recurring event would be cleaner than an adaptive one. Full auto-enrichment would be fewer clicks than making someone select rows. I took neither, because the system had to work on a site nobody has seen and stay safe in the hands of a non-engineer. That human selection step is the control that keeps the spending safe. It is a feature, not friction I forgot to remove.
+A scraper hardcoded for one recurring event would be cleaner, and enriching everyone automatically would take fewer clicks. I took neither, because the system had to work on sites nobody had seen and stay safe for a non-engineer. The step where a person selects rows is what keeps the spending under control.
 
 ## Outcome
 
-Extraction that used to need a custom scraper and most of a day per event now runs in minutes on a site nobody has seen before, so the time goes into review and meeting prep instead. The person preparing for the conference gets to spend their time preparing for the conference.
+Extraction that used to need a custom scraper and most of a day per event now runs in minutes on a site nobody has seen before, so the time goes into reviewing the list and preparing for meetings.

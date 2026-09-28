@@ -1,24 +1,24 @@
 # Network Intelligence
 
-**Context:** A consulting firm whose business development runs on the team's collective LinkedIn networks. Each person has thousands of connections, but they sit in separate accounts as CSV exports with no shared view.
+**Context:** A consulting firm whose business development runs on the team's LinkedIn networks. Each person has thousands of connections, but they sit in separate accounts as CSV exports with no shared view.
 
 ## The problem
 
-The team's real asset is its combined network. But that asset was invisible. There was no way to see, across everyone, which organisations the team collectively had the strongest access to, or where two people both knew someone at the same target. Answering "who can get us a warm intro at company X" meant asking around and hoping someone remembered. At the scale of thousands of connections per person, manual cross-referencing is not possible.
+The team's combined network was its most useful asset, and nobody could see it. There was no way to tell which organisations the team had the strongest access to as a group, or where two people both knew someone at the same target. Finding a warm intro at company X meant asking around and hoping someone remembered. With thousands of connections per person, cross-referencing by hand wasn't possible.
 
-## The constraint that shaped everything
+## The constraint
 
-LinkedIn CSV exports are messy. There is a byte-order mark, junk header rows, and dates in a `DD-MMM-YY` format nothing else uses. Worse, company names are free text. The same organisation shows up as "Goldman Sachs," "Goldman Sachs & Co," and "GS." If you rank organisations without fixing that first, the rankings are garbage. One real org gets split into five weak ones.
+LinkedIn CSV exports are messy: a byte-order mark, junk header rows, and dates in a `DD-MMM-YY` format nothing else uses. Company names are free text, so the same organisation appears as "Goldman Sachs", "Goldman Sachs & Co" and "GS". Rank organisations before fixing that and one real company splits into five weak ones.
 
 ## The key decision
 
-The hard problem here is not the dashboard. It is entity resolution. So the core of the build is a three-tier company normalisation pipeline that runs before anything else:
+Most of the work went into entity resolution, not the dashboard. Company names go through a three-tier normalisation before anything else runs:
 
 1. Exact match
-2. Suffix strip (drop "Ltd," "& Co," "Inc")
+2. Suffix strip (drop "Ltd", "& Co", "Inc")
 3. Fuzzy match (fuse.js) for the rest
 
-Messy names collapse to canonical organisations first. Everything downstream, every ranking and every overlap count, is only as trustworthy as that normalisation underneath it. I spent the effort there, not on the charts.
+Every ranking and overlap count downstream depends on that step being right, so that's where I spent the effort.
 
 ## Architecture
 
@@ -37,8 +37,8 @@ Next.js 15, Supabase with row-level security, deployed on Vercel.
 
 ## The tradeoff I accepted
 
-The data is only as fresh as each person's last export, and I chose to say that out loud rather than pretend the picture is live. The system is built for periodic re-upload, and it flags how old each slice is. I also tuned the fuzzy matcher toward precision, since merging two different companies is a worse error than leaving one unmatched, and kept the output human-reviewable.
+The data is only as fresh as each person's last export, and the system says so. It is built for periodic re-uploads and shows how old each person's data is. I also tuned the fuzzy matcher towards precision, because merging two different companies is a worse mistake than leaving one unmatched, and kept the output reviewable by a person.
 
 ## Outcome
 
-The team's combined network became a single searchable asset. The system surfaces which target organisations the team already has warm access to, and where two members share a connection. Those shared paths are the warm intros that actually convert, and before this they were invisible.
+The team's combined network is now one searchable view. It shows which target organisations the team already has warm access to and where two members share a connection, and those shared connections are where the warm intros come from.
